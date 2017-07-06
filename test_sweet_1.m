@@ -90,6 +90,7 @@ for t = 1:n_trial
     subplot(1,2,2)
     plot(x,'o','Color','k'); hold on
     t_i = 1:t;
+    % use filled dots for "+" responses
     plot(t_i(r(1:t)==1), x(r(1:t)==1),'o','Color','k', 'MarkerFaceColor', 'k'); hold off
     ylim([-3.5 3.5])
     xlim([-2 n_trial+3])
@@ -100,7 +101,7 @@ for t = 1:n_trial
     
 end
 
-% final estimate
+% gives the final estimate
 [mu_hat, sigma_hat, lambda_hat, L] = fit_p_r(x, r);
 
 sprintf('estimates: mu=%.2f  sigma=%.2f lambda=%.2f \ncomputation time (mean) =%.2f sec.',[mu_hat, sigma_hat, lambda_hat, mean(time_taken)])
