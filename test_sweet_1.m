@@ -1,28 +1,33 @@
+%
+% This script performa a simple test of the procedure
+% and illustrate how it can be used.
+% It also plots the likelihood of different values of mu and sigma, and
+% show how it evolves during testing.
+%
 
 clear all 
 
 % settings
 n_trial = 100;
+
+% true parameters
 mu = 0;
 sigma = 1;
-gridsize = 10;
-range_mu = [-3, 3];
-range_sigma = [0.01, 3];
+p_lapse = 0.01; % AKA lambda
 
-%
-p_lapse = 0.01;
-
-% start trials
+% start trials:
+% this indicates for how man trials at the beginning the stimulus should be 
+% selected at random before switching to the sweets points.
 start_trial = 20;
 
-%
-figure('Color','w');
-
-%
+% this is just for plotting
 grp = 20;
-posterior = NaN(grp,grp);
+likelihood2 = NaN(grp,grp);
+range_mu = [-3, 3];
+range_sigma = [0.01, 3];
 xc_p = linspace(range_sigma(1),range_sigma(2),grp);
 yc_p = linspace(range_mu(1),range_mu(2),grp);
+figure('Color','w');
 
 % 
 x = NaN(n_trial,1);
@@ -41,15 +46,18 @@ for t = 1:n_trial
         tic;
         [mu_hat, sigma_hat, lambda_hat] = fit_p_r(x(1:t-1), r(1:t-1));
         
-        % x(t) = compute_sweetpoint(mu_hat, sigma_hat, max(lambda_hat, 0.01),mod(t,2));
-        
+        % Simple:
         % x(t) = compute_sweetpoint(mu_hat, sigma_hat, lambda_hat);
         
+        % This assumes a certain probability of lapses at the beginning
+        % of the session (it can be useful becasue it shifts the sweetpoints 
+        % toward the threshold): 
         if t <= start_trial*2
-            x(t) = compute_sweetpoint(mu_hat, sigma_hat, 0.05); % ,mod(t,2)
+            x(t) = compute_sweetpoint(mu_hat, sigma_hat, max(lambda_hat, 0.05)); % ,mod(t,2)
         else
             x(t) = compute_sweetpoint(mu_hat, sigma_hat, lambda_hat);
         end
+        
         time_taken(t) = toc;
     end
         
@@ -62,17 +70,18 @@ for t = 1:n_trial
         r(t) = abs(r(t)-1);
     end
     
-    % likelihood for sigma & mean
-    posterior = NaN(grp,grp);
+    % compute likelihood for sigma & mean (only for plotting)
+    likelihood2 = NaN(grp,grp);
     for x_i = 1:grp
         for y_i = 1:grp
-             posterior(y_i,x_i) = exp(L_r(x(1:t), r(1:t), yc_p(y_i), xc_p(x_i), lambda_hat));
+             likelihood2(y_i,x_i) = exp(L_r(x(1:t), r(1:t), yc_p(y_i), xc_p(x_i), lambda_hat));
         end
     end
     
     % plot
     subplot(1,2,1)
-    contourf(xc_p, yc_p, posterior);
+    likelihood2 = likelihood2/sum(likelihood2(:));
+    contourf(xc_p, yc_p, likelihood2);
     xlabel('sigma'); ylabel('mu')
     line([sigma,sigma],range_mu,'Color','k')
     line(range_sigma,[mu mu],'Color','k')
@@ -90,18 +99,6 @@ for t = 1:n_trial
     drawnow
     
 end
-
-% fpo=fopen('sim.log','w');
-% for n=1:n_trial
-%     fprintf(fpo,'%.4f\t%.4f\n',x(n),r(n));
-% end
-% fclose(fpo);
-% system('/usr/local/bin/R CMD BATCH fit_2asym.R')
-% fileID = fopen('par_hat.log','r');
-% par_hat = fscanf(fileID,'%f');
-% fclose(fileID);
-% mu_hat = par_hat(1,1);
-% sigma_hat = par_hat(2,1);
 
 % final estimate
 [mu_hat, sigma_hat, lambda_hat, L] = fit_p_r(x, r);
