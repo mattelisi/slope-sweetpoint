@@ -8,12 +8,12 @@
 clear all 
 
 % settings
-n_trial = 200;
-plot_l = 0;
+n_trial = 100;
+plot_l = 1;
 
 % true parameters
 mu = 0;
-sigma = 1.4;
+sigma = 1;
 p_lapse = 0.01; % AKA lambda
 
 % start trials:
@@ -50,16 +50,16 @@ for t = 1:n_trial
         
         
         %%% Simple: %%%
-        x(t) = compute_sweetpoint(mu_hat, sigma_hat, lambda_hat);
+        %x(t) = compute_sweetpoint(mu_hat, sigma_hat, lambda_hat);
         
         %%% This assumes a given minimum probability of lapses at the beginning %%%
         % of the session (it can be useful becasue it shifts the sweetpoints 
         % toward the threshold): 
-%         if t <= start_trial*2
-%             x(t) = compute_sweetpoint(mu_hat, sigma_hat, max(lambda_hat, 0.05)); % ,mod(t,2)
-%         else
-%             x(t) = compute_sweetpoint(mu_hat, sigma_hat, lambda_hat);
-%         end
+        if t <= start_trial*2
+            x(t) = compute_sweetpoint(mu_hat, sigma_hat, max(lambda_hat, 0.05)); % ,mod(t,2)
+        else
+            x(t) = compute_sweetpoint(mu_hat, sigma_hat, lambda_hat);
+        end
         
         
         time_taken(t) = toc;
