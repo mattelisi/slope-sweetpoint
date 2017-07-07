@@ -3,8 +3,9 @@ function s = compute_sweetpoint(mu, sigma, lambda, side)
 % compute sweetpoint for slope estimation of a given function
 %
 % 'side' is a parameter that indicates which sweepoint is requested,
-%   i.e. upper or lower. There are two sweetpoints for the slope, and 
-%   in the case of a Gaussian they are symmetrical around mu.
+%   i.e. upper (1) or lower (0), with respect to the mu. 
+%   (There are two sweetpoints for the slope, and 
+%   in the case of a Gaussian they are symmetrical around mu.)
 %   If side is not provided the function will randomly choose one.
 %
 
