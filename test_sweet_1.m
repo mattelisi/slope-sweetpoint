@@ -2,7 +2,7 @@
 % This script performa a simple test of the procedure
 % and illustrate how it can be used.
 % It also plots the likelihood of different values of mu and sigma, and
-% show how it evolves during testing.
+% shows how it evolves during testing.
 %
 
 clear all 
